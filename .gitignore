@@ -1,0 +1,14 @@
+# Build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+
+# Claude session files
+.claude/

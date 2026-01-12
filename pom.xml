@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cc.mallet</groupId>
+    <artifactId>mallet-json</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Mallet JSON Converter</name>
+    <description>
+        Converts Mallet InstanceList files between versions using JSON as an intermediate format.
+        Supports migration from Mallet 2.0.8 (GNU Trove) to Mallet 2.1+ (HPPC).
+    </description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <jackson.version>2.16.0</jackson.version>
+        <picocli.version>4.7.5</picocli.version>
+    </properties>
+
+    <dependencies>
+        <!-- Jackson for JSON serialization -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- Picocli for CLI -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- Profile for reading Mallet 2.0.8 files (Trove-based) -->
+        <profile>
+            <id>mallet-208</id>
+            <properties>
+                <mallet.version>2.0.8</mallet.version>
+                <jar.classifier>reader-208</jar.classifier>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>cc.mallet</groupId>
+                    <artifactId>mallet</artifactId>
+                    <version>2.0.8</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <!-- Profile for writing Mallet 2.1+ files (HPPC-based) - DEFAULT -->
+        <profile>
+            <id>mallet-21</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <mallet.version>2.1.0</mallet.version>
+                <jar.classifier>writer-21</jar.classifier>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>cc.mallet</groupId>
+                    <artifactId>mallet</artifactId>
+                    <version>2.1.0</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/../Mallet/target/mallet-2.1.0.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>com.carrotsearch</groupId>
+                    <artifactId>hppc</artifactId>
+                    <version>0.8.1</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>cc.mallet.json.MalletJsonConverter</mainClass>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

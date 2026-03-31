@@ -14,11 +14,15 @@ Requires Java 11+ and Maven.
 # Build reader (for Mallet 2.0.8 files)
 mvn clean package -P mallet-208 -DskipTests
 
+# Copy fat JAR with Mallet 2.0.8 support
+cp -a target/mallet-json-1.0.0-fat-208.jar .
+
 # Build writer (for Mallet 2.1 files)
 mvn clean package -P mallet-21 -DskipTests
-```
 
-Note: The `mallet-21` profile expects Mallet 2.1.0 at `../Mallet/target/mallet-2.1.0.jar`. Adjust the path in `pom.xml` if needed.
+# Copy fat JAR for Mallet 2.1 support
+cp -a target/mallet-json-1.0.0-fat-21.jar .
+```
 
 ## Usage
 
@@ -35,12 +39,29 @@ java -cp "target/mallet-json-1.0.0.jar:$(mvn -P mallet-208 dependency:build-clas
   --pretty
 ```
 
+Or with fat JAR with Mallet 2.0.8 support:
+```bash
+java -jar mallet-json-1.0.0-fat-208.jar \
+  to-json \
+  -i old_data.mallet \
+  -o data.json \
+  --pretty
+```
+
 **Step 2: Convert JSON to new format** (using writer built with Mallet 2.1)
 
 ```bash
 mvn package -P mallet-21 -DskipTests
 java -cp "target/mallet-json-1.0.0.jar:$(mvn -P mallet-21 dependency:build-classpath -q -Dmdep.outputFile=/dev/stdout)" \
   cc.mallet.json.MalletJsonConverter from-json \
+  -i data.json \
+  -o new_data.mallet
+```
+
+Or with fat JAR with Mallet 2.1 support:
+```bash
+java -jar mallet-json-1.0.0-fat-21.jar \
+  to-json \
   -i data.json \
   -o new_data.mallet
 ```

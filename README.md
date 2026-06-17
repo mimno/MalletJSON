@@ -61,7 +61,7 @@ java -cp "target/mallet-json-1.0.0.jar:$(mvn -P mallet-21 dependency:build-class
 Or with fat JAR with Mallet 2.1 support:
 ```bash
 java -jar mallet-json-1.0.0-fat-21.jar \
-  to-json \
+  from-json \
   -i data.json \
   -o new_data.mallet
 ```
